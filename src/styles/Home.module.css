@@ -1,3 +1,83 @@
+.header {
+  display: "flex";
+  align-items: "center";
+  justify-content: "space-between";
+}
+
+.NFTFlex {
+  display: "flex";
+  align-items: "center";
+  justify-content: "space-evenly";
+  gap: "50px";
+}
+
+.NFTCard {
+  display: "flex";
+  flex-direction: "column";
+  border: "2px solid white";
+  border-radius: "10px";
+  padding: "20px";
+  align-items: "center";
+  gap: "10px";
+  font-weight: "bold";
+}
+
+.NFTMint {
+  font-weight: "700";
+  padding: "5px 20px";
+  border: "2px solid white";
+  color: "white";
+  background-color: "black";
+  border-radius: "5px";
+  cursor: "pointer";
+}
+
+.modal {
+  position: "fixed";
+  left: "0";
+  top: "0";
+  right: "0";
+  bottom: "0";
+  background-color: "rgba(0; 0; 0; 0.8)";
+  display: "flex";
+  align-items: "center";
+  justify-content: "center";
+  text-align: "center";
+  z-index: "1";
+}
+
+.modalContent {
+  background-color: "#fff";
+  padding: "10px 30px";
+  border-radius: "16px";
+  color: "#000";
+}
+
+.modalBody {
+  padding: "20px";
+  border-top: "1px solid #eee";
+  border-bottom: "1px solid #eee";
+}
+
+.modalFooter {
+  display: "flex";
+  flex-direction: "column";
+  gap: "10px";
+  padding: "20px";
+  justify-content: "space-evenly";
+}
+
+.modalButton {
+  padding: "10px 20px";
+  background-color: "#fff";
+  color: "#666";
+  border: "0";
+  border-radius: "10px";
+  font-size: "18px";
+  font-weight: "700";
+  box-shadow: "0 0.2em 0.4em 0 rgba(0, 0, 0, 0.2), 0 0.3em 1em 0 rgba(0, 0, 0, 0.19)";
+}
+
 .main {
   display: flex;
   flex-direction: column;
@@ -6,7 +86,7 @@
   padding: 6rem;
   min-height: 100vh;
 }
-
+/* 
 .description {
   display: inherit;
   justify-content: inherit;
@@ -97,7 +177,7 @@
 
 .center::before,
 .center::after {
-  content: '';
+  content: "";
   left: 50%;
   position: absolute;
   filter: blur(45px);
@@ -107,7 +187,8 @@
 .logo {
   position: relative;
 }
-/* Enable hover only on non-touch devices */
+
+Enable hover only on non-touch devices 
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
     background: rgba(var(--card-rgb), 0.1);
@@ -125,7 +206,7 @@
   }
 }
 
-/* Mobile */
+Mobile
 @media (max-width: 700px) {
   .content {
     padding: 4rem;
@@ -203,13 +284,13 @@
 }
 
 /* Tablet and Smaller Desktop */
-@media (min-width: 701px) and (max-width: 1120px) {
+/* @media (min-width: 701px) and (max-width: 1120px) {
   .grid {
     grid-template-columns: repeat(2, 50%);
   }
-}
+} */
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   .vercelLogo {
     filter: invert(1);
   }
@@ -217,13 +298,13 @@
   .logo {
     filter: invert(1) drop-shadow(0 0 0.3rem #ffffff70);
   }
-}
+} */
 
-@keyframes rotate {
+/* @keyframes rotate {
   from {
     transform: rotate(360deg);
   }
   to {
     transform: rotate(0deg);
   }
-}
+} */
