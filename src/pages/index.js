@@ -12,7 +12,7 @@ import {
 } from "wagmi";
 import TierABI from "@/artifacts/contracts/TierNFT.sol/TierNFT.json";
 import { useEffect, useState } from "react";
-import { parseEther } from "viem";
+import { parseEther, formatUnits } from "viem";
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "";
 export default function Home() {
@@ -21,7 +21,6 @@ export default function Home() {
   const [isUserConnected, setIsUserConnected] = useState(false);
   const [latestNFTMinted, setLatestNFTMinted] = useState(0);
   const [modalShow, setModalShow] = useState(false);
-  const [isMinting, setIsMinting] = useState(false);
   const [mintingPrice, setMintingPrice] = useState("0");
 
   const { data: tokenData, refetch: refetchTokenData } = useContractRead({
@@ -31,6 +30,8 @@ export default function Home() {
     watch: true,
     enabled: process.env.NEXT_PUBLIC_CONTRACT_ADDRESS,
   });
+
+  console.log({ tokenData, asd: formatUnits(tokenData, 0) });
 
   const { data: tokenURI } = useContractRead({
     address: CONTRACT_ADDRESS,
@@ -65,29 +66,30 @@ export default function Home() {
     address: CONTRACT_ADDRESS,
     abi: TierABI.abi,
     functionName: "safeMint",
-    value: parseEther(mintingPrice),
-    enabled: Boolean(mintingPrice !== "0"),
+    value: parseEther(mintingPrice), // "0.02"
+    // enabled: Boolean(mintingPrice !== "0"), // "true"
   });
 
   const { data: mintData, write } = useContractWrite(config);
 
-  const { isLoading: isWaitForMintLoading, isSuccess } = useWaitForTransaction({
+  const { data: txData } = useWaitForTransaction({
     hash: mintData?.hash,
   });
 
-  console.log({ isWaitForMintLoading, isSuccess });
-
-  const mintToken = async (e) => {
-    // TODO: we need to fix the value before the prepareContractWrite hook
-    try {
-      write();
-
-      console.log("This is the mint data", mintData);
-      refetchTokenData(); // <--------- this is the new line: here an exaplanation of the refetchTokenData() Function for i.e.
-      setIsMinting(false); // TODO: highlight this new line too
-    } catch (error) {
-      console.log({ error });
-      console.log("Error minting NFT", error.message);
+  const mintToken = async () => {
+    if (mintingPrice !== "0") {
+      try {
+        setModalShow(true);
+        write();
+        refetchTokenData(); // <--------- this is the new line: here an exaplanation of the refetchTokenData() Function for i.e.
+        setMintingPrice("0");
+      } catch (error) {
+        console.log({ error });
+        console.log("Error minting NFT", error.message);
+        setMintingPrice("0");
+      }
+    } else {
+      alert("Please select a tier to mint");
     }
   };
 
@@ -117,8 +119,7 @@ export default function Home() {
                 value="0.01"
                 onClick={(e) => {
                   setMintingPrice(e.target.value);
-
-                  mintToken(e);
+                  mintToken();
                 }}
                 style={NFTMint}
                 disabled={isMintLoading}
@@ -138,7 +139,7 @@ export default function Home() {
                 value="0.02"
                 onClick={(e) => {
                   setMintingPrice(e.target.value);
-                  mintToken(e);
+                  mintToken();
                 }}
                 style={NFTMint}
                 disabled={isMintLoading}
@@ -158,7 +159,7 @@ export default function Home() {
                 value="0.05"
                 onClick={(e) => {
                   setMintingPrice(e.target.value);
-                  mintToken(e);
+                  mintToken();
                 }}
                 style={NFTMint}
                 disabled={isMintLoading}
@@ -170,7 +171,7 @@ export default function Home() {
 
           {modalShow && (
             <div style={modal}>
-              {isMinting ? (
+              {txData === undefined ? (
                 <div style={modalContent}>
                   <h2>Minting...</h2>
                 </div>
@@ -189,19 +190,23 @@ export default function Home() {
                   <div style={modalFooter}>
                     <button style={modalButton}>
                       <a
-                        href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${tokenData}`}
+                        href={`https://testnets.opensea.io/assets/mumbai/${CONTRACT_ADDRESS}/${
+                          formatUnits(tokenData, 0) - 1
+                        }`}
                         target="_blank"
                       >
                         View on OpenSea
                       </a>
                     </button>
                     <button style={modalButton}>
-                      <a
-                        href={`https://mumbai.polygonscan.com/tx/${mintData.hash}`}
-                        target="_blank"
-                      >
-                        View on Polygonscan
-                      </a>
+                      {txData && txData.transactionHash ? (
+                        <a
+                          href={`https://mumbai.polygonscan.com/tx/${txData.transactionHash}`}
+                          target="_blank"
+                        >
+                          View on Polygonscan
+                        </a>
+                      ) : undefined}
                     </button>
                     <button
                       onClick={() => setModalShow(false)}
